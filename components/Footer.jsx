@@ -1,11 +1,11 @@
 import Link from "next/link";
 
 const shopLinks = [
-  { label: "Men's Collection", href: "/men" },
-  { label: "Women's Collection", href: "/women" },
-  { label: "Oversized Fit", href: "/oversized" },
-  { label: "New Arrivals", href: "/new-arrivals" },
-  { label: "Sale & Offers", href: "/sale" },
+  { label: "Men's Collection", href: "/products/men" },
+  { label: "Women's Collection", href: "/products/women" },
+  { label: "Oversized Fit", href: "/products/oversized" },
+  { label: "New Arrivals", href: "/products/new-arrivals" },
+  { label: "Sale & Offers", href: "/products/sale" },
 ];
 
 const companyLinks = [
