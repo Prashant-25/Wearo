@@ -2,17 +2,36 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
-  { label: "Men", href: "/men" },
-  { label: "Women", href: "/women" },
-  { label: "Oversized", href: "/oversized" },
-  { label: "New Arrivals", href: "/new-arrivals" },
+  { label: "Men", href: "/products/men" },
+  { label: "Women", href: "/products/women" },
+  { label: "Oversized", href: "/products/oversized" },
+  { label: "New Arrivals", href: "/products/new-arrivals" },
   { label: "Collections", href: "/collections" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const cartItemsCount = useCartStore((state) => state.cart.length);
+  const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
+  
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-zinc-100 dark:border-white/5">
@@ -39,10 +58,9 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     className={`relative px-3 lg:px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg
-                      ${
-                        isActive
-                          ? "text-zinc-900 dark:text-white"
-                          : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                      ${isActive
+                        ? "text-zinc-900 dark:text-white"
+                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
                       }`}
                   >
                     {link.label}
@@ -97,9 +115,11 @@ export default function Navbar() {
                 <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
               </svg>
               {/* Badge */}
-              <span className="absolute top-1.5 right-1.5 w-4 h-4 flex items-center justify-center text-[10px] font-bold text-white bg-indigo-500 rounded-full leading-none">
-                3
-              </span>
+              {mounted && wishlistItemsCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 flex items-center justify-center text-[10px] font-bold text-white bg-indigo-500 rounded-full leading-none">
+                  {wishlistItemsCount}
+                </span>
+              )}
             </Link>
 
             {/* Cart */}
@@ -123,19 +143,42 @@ export default function Navbar() {
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
               {/* Badge */}
-              <span className="absolute top-1.5 right-1.5 w-4 h-4 flex items-center justify-center text-[10px] font-bold text-white bg-indigo-500 rounded-full leading-none">
-                1
-              </span>
+              {mounted && cartItemsCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 flex items-center justify-center text-[10px] font-bold text-white bg-indigo-500 rounded-full leading-none">
+                  {cartItemsCount}
+                </span>
+              )}
             </Link>
 
             {/* Profile Avatar */}
-            <Link
-              href="/profile"
-              aria-label="Profile"
-              className="ml-1 sm:ml-2 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold shadow-sm hover:shadow-md transition-shadow duration-200 ring-2 ring-white dark:ring-zinc-900"
-            >
-              P
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  aria-label="Profile Menu"
+                  className="ml-1 sm:ml-2 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold shadow-sm hover:shadow-md transition-shadow duration-200 ring-2 ring-white dark:ring-zinc-900 outline-none"
+                >
+                  P
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="cursor-pointer w-full">
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/orders" className="cursor-pointer w-full">
+                    Orders
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600">
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Mobile hamburger */}
             <button
