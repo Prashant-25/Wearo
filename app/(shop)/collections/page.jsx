@@ -13,7 +13,7 @@ const span = [
 async function getCollections() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/collections`, {
-      next: { revalidate: 0 }
+      next: { revalidate: 60 }
     });
     if (!res.ok) return [];
     const resObj = await res.json()

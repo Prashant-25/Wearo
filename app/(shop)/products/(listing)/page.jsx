@@ -9,7 +9,7 @@ async function getProducts() {
     // For simplicity and robustness in a Server Component, let's call the DB logic directly
     // or use high-level fetch.
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products`, {
-      next: { revalidate: 0 } // Ensure fresh data
+      next: { revalidate: 60 } // Ensure fresh data
     });
 
     const resObj = await res.json()
