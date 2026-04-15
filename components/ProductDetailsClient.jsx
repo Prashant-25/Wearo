@@ -35,7 +35,7 @@ export default function ProductDetailsClient({ product }) {
   };
 
   return (
-    <div className="max-w-[1200px] w-full mx-auto py-8 md:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-[1400px] w-full mx-auto py-8 md:py-16 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
 
         {/* Left: Image Gallery */}
@@ -44,7 +44,7 @@ export default function ProductDetailsClient({ product }) {
           <div className="flex md:flex-col gap-4 overflow-x-auto md:w-24 shrink-0 pb-2 md:pb-0 hide-scrollbar">
             {product.images && product.images.length > 0 ? (
               product.images.map((img, idx) => (
-                <button key={idx} className="w-20 md:w-24 aspect-[4/5] bg-zinc-100 dark:bg-zinc-900 overflow-hidden relative focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <button key={idx} className="w-20 md:w-24 h-18 bg-zinc-100 dark:bg-zinc-900 overflow-hidden relative focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white rounded-lg border border-zinc-200 dark:border-zinc-800">
                   <Image src={img} alt={`${product.name} ${idx + 1}`} fill className="object-cover" />
                 </button>
               ))
@@ -80,7 +80,7 @@ export default function ProductDetailsClient({ product }) {
         <div className="flex-1 w-full max-w-lg">
           <p className="text-sm text-zinc-500 mb-2 font-medium">{product.category}</p>
           <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white mb-4 tracking-tight">
-            {product.name}
+            {product.name.replace(/TSS|Souled/gi, "Wearo").trim()}
           </h1>
 
           <div className="flex items-center gap-4 mb-6">
@@ -176,8 +176,8 @@ export default function ProductDetailsClient({ product }) {
                     onClick={() => setSelectedSize(sizeObj.size)}
                     disabled={sizeObj.stock === 0}
                     className={`h-12 border rounded-md flex items-center justify-center font-medium transition-all ${selectedSize === sizeObj.size
-                        ? "border-zinc-900 bg-zinc-900 text-white dark:bg-white dark:border-white dark:text-black"
-                        : "border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-600"
+                      ? "border-zinc-900 bg-zinc-900 text-white dark:bg-white dark:border-white dark:text-black"
+                      : "border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-600"
                       } ${sizeObj.stock === 0 ? "opacity-30 cursor-not-allowed line-through" : ""}`}
                   >
                     {sizeObj.size}

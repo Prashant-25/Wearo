@@ -11,9 +11,9 @@ async function getProducts() {
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products`, {
       next: { revalidate: 0 } // Ensure fresh data
     });
-    
-    if (!res.ok) return [];
-    return res.json();
+
+    const resObj = await res.json()
+    return resObj.data;
   } catch (error) {
     console.error("Fetch products failed:", error);
     return [];
@@ -22,7 +22,7 @@ async function getProducts() {
 
 export default async function AllProductsPage() {
   const products = await getProducts();
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

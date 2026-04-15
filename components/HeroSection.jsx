@@ -46,7 +46,7 @@ export default function HeroSection() {
           {/* Dual CTA buttons — rounded corners, soft shadows */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link
-              href="/shop"
+              href="/products/oversized"
               className="group inline-flex items-center justify-center gap-3 bg-white text-black px-7 py-3.5 sm:px-8 sm:py-4 rounded-full font-semibold text-base sm:text-lg shadow-md transition-all duration-200 hover:scale-[1.04] hover:shadow-lg active:scale-95"
             >
               Shop Now

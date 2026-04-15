@@ -13,6 +13,8 @@ export default function ProductCard({ product }) {
     state.wishlist.some(item => item.id === product.id)
   );
 
+  console.log(product.category.replace(/TSS/gi, "").trim())
+
   const handleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -26,9 +28,9 @@ export default function ProductCard({ product }) {
     >
       {/* Image area - Matching TrendingSection m-3 rounded-2xl */}
       <div className="relative aspect-square bg-zinc-50 dark:bg-zinc-800/50 m-3 rounded-2xl flex items-center justify-center overflow-hidden">
-        {product.image ? (
+        {product.images?.[0] ? (
           <Image
-            src={product.image}
+            src={product.images?.[0]}
             alt={product.name}
             fill
             className="object-cover rounded-2xl transition-transform duration-500 group-hover:scale-105"
@@ -74,9 +76,9 @@ export default function ProductCard({ product }) {
         {/* Brand + Rating */}
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold text-zinc-900 dark:text-white truncate pr-2">
-            {product.brand || "Wearo Premium"}
+            {product.name.replace(/TSS|Souled/gi, "Wearo").trim()}
           </span>
-          {product.rating && (
+          {product.avg_rating && (
             <div className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400 shrink-0">
               <svg
                 width="12"
@@ -89,31 +91,27 @@ export default function ProductCard({ product }) {
               >
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
-              <span>{product.rating}</span>
+              <span>{product.avg_rating}</span>
             </div>
           )}
         </div>
 
         {/* Product name */}
         <p className="text-sm text-zinc-400 dark:text-zinc-500 mb-3 leading-snug line-clamp-1">
-          {product.name}
+          {product.category.replace(/TSS|Souled/gi, "Wearo").trim()}
         </p>
 
         {/* Price + Primary Action */}
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-2 pb-1">
             <span className="text-lg font-bold text-zinc-900 dark:text-white">
-              ${product.price.toLocaleString()}
+              ₹{product.price.toLocaleString()}
             </span>
             {product.originalPrice && (
               <span className="text-sm text-zinc-400 line-through">
-                ${product.originalPrice.toLocaleString()}
+                ₹{product.originalPrice.toLocaleString()}
               </span>
             )}
-          </div>
-
-          <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-            Details
           </div>
         </div>
       </div>
