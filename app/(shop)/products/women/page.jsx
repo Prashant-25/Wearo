@@ -5,8 +5,8 @@ async function getWomenProducts() {
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products?gender=2`, {
       next: { revalidate: 0 }
     });
-    if (!res.ok) return [];
-    return res.json();
+    const resObj = await res.json()
+    return resObj.data;
   } catch (error) {
     console.error("Fetch women products failed:", error);
     return [];
@@ -15,7 +15,7 @@ async function getWomenProducts() {
 
 export default async function WomenProductsPage() {
   const products = await getWomenProducts();
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

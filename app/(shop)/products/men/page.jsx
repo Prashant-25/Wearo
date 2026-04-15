@@ -6,7 +6,8 @@ async function getMenProducts() {
       next: { revalidate: 0 }
     });
     if (!res.ok) return [];
-    return res.json();
+    const resObj = await res.json()
+    return resObj.data;
   } catch (error) {
     console.error("Fetch men products failed:", error);
     return [];
@@ -15,7 +16,7 @@ async function getMenProducts() {
 
 export default async function MenProductsPage() {
   const products = await getMenProducts();
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

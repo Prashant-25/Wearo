@@ -57,7 +57,7 @@ export default function TrendingSection({ initialProducts = [] }) {
   const [activeFilter, setActiveFilter] = useState("All");
 
   // Only show the first 8 products for trending
-  const products = initialProducts.slice(0, 8);
+  const products = initialProducts?.slice(0, 4);
 
   const filteredProducts =
     activeFilter === "All"

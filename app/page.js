@@ -8,8 +8,9 @@ async function getProducts() {
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products`, {
       next: { revalidate: 3600 } // Cache for 1 hour
     });
+    const resObj = await res.json()
     if (!res.ok) return [];
-    return res.json();
+    return resObj.data;
   } catch (error) {
     console.error("Home fetch failed:", error);
     return [];
@@ -24,7 +25,7 @@ export default async function Home() {
       <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <HeroSection />
         <CategorySection />
-        <TrendingSection initialProducts={products?.slice(0, 4)} />
+        <TrendingSection initialProducts={products} />
         <SaleBanner />
       </div>
     </main>

@@ -5,8 +5,8 @@ async function getOversizedProducts() {
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products?gender=3`, {
       next: { revalidate: 0 }
     });
-    if (!res.ok) return [];
-    return res.json();
+    const resObj = await res.json()
+    return resObj.data;
   } catch (error) {
     console.error("Fetch oversized products failed:", error);
     return [];
@@ -15,7 +15,7 @@ async function getOversizedProducts() {
 
 export default async function OversizedProductsPage() {
   const products = await getOversizedProducts();
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

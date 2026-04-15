@@ -6,7 +6,8 @@ async function getNewArrivals() {
       next: { revalidate: 0 }
     });
     if (!res.ok) return [];
-    return res.json();
+    const resObj = await res.json()
+    return resObj.data;
   } catch (error) {
     console.error("Fetch new arrivals failed:", error);
     return [];
@@ -15,7 +16,7 @@ async function getNewArrivals() {
 
 export default async function NewArrivalsPage() {
   const products = await getNewArrivals();
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
