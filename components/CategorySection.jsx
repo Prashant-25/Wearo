@@ -3,33 +3,33 @@ import Link from "next/link";
 
 const categories = [
   {
-    name: "Oversized T-Shirts",
-    href: "/category/oversized-tshirts",
+    name: "Oversized Fits",
+    href: "/products/oversized",
     image: "/cat-oversized-tshirts.png",
   },
   {
-    name: "Hoodies",
-    href: "/category/hoodies",
+    name: "New Arrivals",
+    href: "/products/new-arrivals",
     image: "/cat-hoodies.png",
   },
   {
-    name: "Joggers",
-    href: "/category/joggers",
-    image: "/cat-joggers.png",
-  },
-  {
-    name: "Full Sleeve",
-    href: "/category/full-sleeve",
+    name: "Men's Collection",
+    href: "/products/men",
     image: "/cat-full-sleeve.png",
   },
   {
-    name: "Anime",
-    href: "/category/anime",
+    name: "Women's Collection",
+    href: "/products/women",
     image: "/cat-anime.png",
   },
   {
-    name: "Marvel",
-    href: "/category/marvel",
+    name: "All Collections",
+    href: "/products",
+    image: "/cat-joggers.png",
+  },
+  {
+    name: "Trending Now",
+    href: "/products",
     image: "/cat-marvel.png",
   },
 ];
