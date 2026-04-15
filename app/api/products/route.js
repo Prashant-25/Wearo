@@ -1,27 +1,36 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Product from "@/models/Product";
+import { buildProductPipeline } from "@/lib/filters/productFilter";
 
 export async function GET(request) {
     try {
         await connectDB();
-        
-        // Get query parameters for filtering
-        const { searchParams } = new URL(request.url);
-        const category = searchParams.get("category");
-        const gender = searchParams.get("gender");
-        const isNew = searchParams.get("new") === "true";
-        
-        let query = {};
-        if (category) query.category_slug = category;
-        if (gender) query.gender_type = parseInt(gender);
-        if (isNew) query.isNew = true;
 
-        const products = await Product.find(query).sort({ createdAt: -1 });
-        
+        const { searchParams } = new URL(request.url)
+
+        const filters = {
+            search: searchParams.get("search"),
+            category: searchParams.get("category"),
+            gender: searchParams.get("gender"),
+            size: searchParams.get("size"),
+            color: searchParams.get("color"),
+            rating: searchParams.get("rating"),
+            priceMin: searchParams.get("min"),
+            priceMax: searchParams.get("max"),
+            tags: searchParams.get("tags")?.split(","),
+            sort: searchParams.get("sort"),
+            page: searchParams.get("page"),
+            limit: searchParams.get("limit")
+        }
+
+        const pipeline = buildProductPipeline(filters)
+
+        const products = await Product.aggregate(pipeline);
+
         // Transform for frontend compatibility
         const transformedProducts = products.map(p => {
-            const productObj = p.toObject();
+            const productObj = p;
             return {
                 ...productObj,
                 id: productObj._id.toString(),
@@ -30,7 +39,11 @@ export async function GET(request) {
             };
         });
 
-        return NextResponse.json(transformedProducts);
+        return NextResponse.json({
+            success: true,
+            count: transformedProducts.length,
+            data: transformedProducts
+        });
     } catch (error) {
         console.error("GET Products Error:", error);
         return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
@@ -41,10 +54,10 @@ export async function POST(request) {
     try {
         await connectDB();
         const data = await request.json();
-        
+
         // Basic validation could go here
         const product = await Product.create(data);
-        
+
         return NextResponse.json(product, { status: 201 });
     } catch (error) {
         console.error("POST Product Error:", error);
