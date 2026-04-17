@@ -24,7 +24,7 @@ export default function CartPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="max-w-[1200px] mx-auto px-4 py-20 text-center">
+      <div className="max-w-[1400px] mx-auto px-4 py-20 text-center">
         <div className="flex justify-center mb-6">
           <div className="p-6 bg-zinc-100 dark:bg-zinc-900 rounded-full">
             <ShoppingBag size={48} className="text-zinc-400" />
@@ -44,7 +44,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 py-10 md:py-16">
+    <div className="max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 ">
       <div className="flex items-center gap-4 mb-8">
         <Link href="/products" className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full transition-colors">
           <ArrowLeft size={20} />
@@ -54,7 +54,7 @@ export default function CartPage() {
 
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Cart Items List */}
-        <div className="flex-[2] space-y-8">
+        <div className="flex-2 space-y-8">
           {cart.map((item) => (
             <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-6 pb-8 border-b border-zinc-100 dark:border-zinc-800 last:border-0">
               {/* Product Image */}
@@ -87,7 +87,7 @@ export default function CartPage() {
                     <span className="font-medium text-zinc-900 dark:text-zinc-300">Size:</span> {item.size}
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="font-medium text-zinc-900 dark:text-zinc-300">Color:</span> 
+                    <span className="font-medium text-zinc-900 dark:text-zinc-300">Color:</span>
                     <span className="capitalize">{item.color}</span>
                   </div>
                 </div>
@@ -95,7 +95,7 @@ export default function CartPage() {
                 {/* Controls */}
                 <div className="flex items-center justify-between mt-auto">
                   <div className="flex items-center border border-zinc-200 dark:border-zinc-800 rounded-full p-1">
-                    <button 
+                    <button
                       onClick={() => updateQuantity(item.id, item.size, item.color, item.quantity - 1)}
                       className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full transition-colors disabled:opacity-30"
                       disabled={item.quantity <= 1}
@@ -103,7 +103,7 @@ export default function CartPage() {
                       <Minus size={16} />
                     </button>
                     <span className="w-8 text-center font-medium">{item.quantity}</span>
-                    <button 
+                    <button
                       onClick={() => updateQuantity(item.id, item.size, item.color, item.quantity + 1)}
                       className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full transition-colors"
                     >
@@ -111,7 +111,7 @@ export default function CartPage() {
                     </button>
                   </div>
 
-                  <button 
+                  <button
                     onClick={() => removeItem(item.id, item.size, item.color)}
                     className="flex items-center gap-2 text-red-500 hover:text-red-600 transition-colors py-2 px-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-sm font-medium"
                   >
@@ -128,7 +128,7 @@ export default function CartPage() {
         <div className="flex-[1] lg:sticky lg:top-32 h-fit">
           <div className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 border border-zinc-100 dark:border-zinc-800">
             <h2 className="text-xl font-bold mb-6">Order Summary</h2>
-            
+
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
                 <span>Subtotal</span>

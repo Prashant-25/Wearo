@@ -21,6 +21,8 @@ const navLinks = [
   { label: "New Arrivals", href: "/products/new-arrivals" },
   { label: "Collections", href: "/collections" },
 ];
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 import { useSession, signOut } from "next-auth/react";
 
@@ -53,7 +55,7 @@ export default function Navbar() {
           </Link>
 
           {/* Center Nav Links — hidden on mobile */}
-          <ul className="hidden md:flex items-center gap-1 lg:gap-2">
+          <ul className="hidden xl:flex items-center gap-1 lg:gap-2">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -79,25 +81,33 @@ export default function Navbar() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
-            {/* Search */}
-            <button
-              aria-label="Search"
-              className="relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-            </button>
+            <div className="hidden xl:flex items-center">
+              {/* Search */}
+              <div className="group relative flex items-center">
+                <div className="absolute left-3 z-10 pointer-events-none">
+                  <Search className="h-5 w-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
+                </div>
+                <Input
+                  type="search"
+                  placeholder="Search products..."
+                  className="
+                  w-10 h-10 pl-10 pr-0 
+                  cursor-pointer rounded-full border-none bg-transparent 
+                  transition-all duration-300 ease-in-out
+                  placeholder:opacity-0
+                  
+                  group-hover:w-64 group-hover:pl-10 group-hover:pr-4 
+                  group-hover:bg-zinc-100 dark:group-hover:bg-zinc-900 
+                  group-hover:placeholder:opacity-100
+                  
+                  focus:w-64 focus:pl-10 focus:pr-4 
+                  focus:bg-zinc-100 dark:focus:bg-zinc-900 
+                  focus:placeholder:opacity-100 
+                  focus:ring-1 focus:ring-zinc-300
+                "
+                />
+              </div>
+            </div>
 
             {/* Wishlist */}
             {session && <Link
@@ -205,7 +215,7 @@ export default function Navbar() {
             {/* Mobile hamburger */}
             <button
               aria-label="Open menu"
-              className="md:hidden relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200 ml-1"
+              className="xl:hidden relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200 ml-1"
             >
               <svg
                 width="20"

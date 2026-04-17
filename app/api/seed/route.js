@@ -1129,7 +1129,7 @@ export async function GET() {
     const products_to_insert = mapScrapedData(scrappedM);
 
     console.log(products_to_insert)
-    const insertedOthers = await Product.insertMany(products_to_insert);
+    const insertedOthers = await Product.insertMany(products_to_insert, { ordered: false });
 
     console.log("Seeding completed successfully.");
     return NextResponse.json({
