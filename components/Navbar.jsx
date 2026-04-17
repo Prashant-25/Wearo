@@ -22,11 +22,14 @@ const navLinks = [
   { label: "Collections", href: "/collections" },
 ];
 
+import { useSession, signOut } from "next-auth/react";
+
 export default function Navbar() {
   const pathname = usePathname();
   const cartItemsCount = useCartStore((state) => state.cart.length);
   const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
-  
+  const { data: session, status } = useSession();
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -97,7 +100,7 @@ export default function Navbar() {
             </button>
 
             {/* Wishlist */}
-            <Link
+            {session && <Link
               href="/wishlist"
               aria-label="Wishlist"
               className="relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200"
@@ -120,10 +123,10 @@ export default function Navbar() {
                   {wishlistItemsCount}
                 </span>
               )}
-            </Link>
+            </Link>}
 
             {/* Cart */}
-            <Link
+            {session && <Link
               href="/cart"
               aria-label="Cart"
               className="relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200"
@@ -148,7 +151,7 @@ export default function Navbar() {
                   {cartItemsCount}
                 </span>
               )}
-            </Link>
+            </Link>}
 
             {/* Profile Avatar */}
             <DropdownMenu>
@@ -157,10 +160,23 @@ export default function Navbar() {
                   aria-label="Profile Menu"
                   className="ml-1 sm:ml-2 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold shadow-sm hover:shadow-md transition-shadow duration-200 ring-2 ring-white dark:ring-zinc-900 outline-none"
                 >
-                  P
+                  {session && session?.user?.name[0]}
+                  {!session && <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              {session ? <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
@@ -174,10 +190,16 @@ export default function Navbar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600">
+                <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/login" })} className="cursor-pointer text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600">
                   Logout
                 </DropdownMenuItem>
-              </DropdownMenuContent>
+              </DropdownMenuContent> :
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild className="cursor-pointer text-cyan-600 focus:text-cyan-600">
+                    <Link href="/login" >Login</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              }
             </DropdownMenu>
 
             {/* Mobile hamburger */}

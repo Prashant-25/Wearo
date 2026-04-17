@@ -13,8 +13,6 @@ export default function ProductCard({ product }) {
     state.wishlist.some(item => item.id === product.id)
   );
 
-  console.log(product.category.replace(/TSS/gi, "").trim())
-
   const handleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();

@@ -67,7 +67,7 @@ export default async function CollectionsPage() {
                 {collection.description}
               </p>
               <div>
-                <Button asChild size="lg" className="rounded-none bg-white text-black hover:bg-zinc-200 uppercase tracking-widest text-xs font-bold">
+                <Button asChild size="lg" className="rounded-none bg-white text-black hover:bg-zinc-200 hover:text-white uppercase tracking-widest text-xs font-bold">
                   <Link href={`/collections/${collection.slug}`}>
                     Explore Collection
                   </Link>
