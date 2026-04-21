@@ -2,6 +2,9 @@
 
 Wearo is a modern, minimalist, and responsive ecommerce clothing store built with the latest web technologies. It provides a seamless shopping experience with a focus on UI/UX, fast performance, and secure payment processing.
 
+## 🚀 Live Demo
+🌐 [https://wearo-sable.vercel.app](https://wearo-sable.vercel.app)
+
 ## 🚀 Features
 
 - **Modern Tech Stack**: Built with Next.js 14 (App Router), React, and Tailwind CSS.
