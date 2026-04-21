@@ -21,12 +21,17 @@ const navLinks = [
   { label: "New Arrivals", href: "/products/new-arrivals" },
   { label: "Collections", href: "/collections" },
 ];
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+
+import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const cartItemsCount = useCartStore((state) => state.cart.length);
   const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
-  
+  const { data: session, status } = useSession();
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -50,7 +55,7 @@ export default function Navbar() {
           </Link>
 
           {/* Center Nav Links — hidden on mobile */}
-          <ul className="hidden md:flex items-center gap-1 lg:gap-2">
+          <ul className="hidden xl:flex items-center gap-1 lg:gap-2">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -76,28 +81,36 @@ export default function Navbar() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
-            {/* Search */}
-            <button
-              aria-label="Search"
-              className="relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
-            </button>
+            <div className="hidden xl:flex items-center">
+              {/* Search */}
+              <div className="group relative flex items-center">
+                <div className="absolute left-3 z-10 pointer-events-none">
+                  <Search className="h-5 w-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
+                </div>
+                <Input
+                  type="search"
+                  placeholder="Search products..."
+                  className="
+                  w-10 h-10 pl-10 pr-0 
+                  cursor-pointer rounded-full border-none bg-transparent 
+                  transition-all duration-300 ease-in-out
+                  placeholder:opacity-0
+                  
+                  group-hover:w-64 group-hover:pl-10 group-hover:pr-4 
+                  group-hover:bg-zinc-100 dark:group-hover:bg-zinc-900 
+                  group-hover:placeholder:opacity-100
+                  
+                  focus:w-64 focus:pl-10 focus:pr-4 
+                  focus:bg-zinc-100 dark:focus:bg-zinc-900 
+                  focus:placeholder:opacity-100 
+                  focus:ring-1 focus:ring-zinc-300
+                "
+                />
+              </div>
+            </div>
 
             {/* Wishlist */}
-            <Link
+            {session && <Link
               href="/wishlist"
               aria-label="Wishlist"
               className="relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200"
@@ -120,10 +133,10 @@ export default function Navbar() {
                   {wishlistItemsCount}
                 </span>
               )}
-            </Link>
+            </Link>}
 
             {/* Cart */}
-            <Link
+            {session && <Link
               href="/cart"
               aria-label="Cart"
               className="relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200"
@@ -148,7 +161,7 @@ export default function Navbar() {
                   {cartItemsCount}
                 </span>
               )}
-            </Link>
+            </Link>}
 
             {/* Profile Avatar */}
             <DropdownMenu>
@@ -157,10 +170,23 @@ export default function Navbar() {
                   aria-label="Profile Menu"
                   className="ml-1 sm:ml-2 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold shadow-sm hover:shadow-md transition-shadow duration-200 ring-2 ring-white dark:ring-zinc-900 outline-none"
                 >
-                  P
+                  {session && session?.user?.name[0]}
+                  {!session && <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              {session ? <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
@@ -174,16 +200,22 @@ export default function Navbar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600">
+                <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/login" })} className="cursor-pointer text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600">
                   Logout
                 </DropdownMenuItem>
-              </DropdownMenuContent>
+              </DropdownMenuContent> :
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild className="cursor-pointer text-cyan-600 focus:text-cyan-600">
+                    <Link href="/login" >Login</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              }
             </DropdownMenu>
 
             {/* Mobile hamburger */}
             <button
               aria-label="Open menu"
-              className="md:hidden relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200 ml-1"
+              className="xl:hidden relative p-2.5 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-200 ml-1"
             >
               <svg
                 width="20"

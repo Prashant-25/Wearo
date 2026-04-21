@@ -8,7 +8,6 @@ export const useCartStore = create()(
     (set, get) => ({
       cart: [],
 
-      // Actions
       addItem: (product, size = "M", color = "Default") => {
         const currentCart = get().cart;
         const existingItemIndex = currentCart.findIndex(
@@ -36,7 +35,7 @@ export const useCartStore = create()(
 
       updateQuantity: (productId, size, color, quantity) => {
         if (quantity < 1) return;
-        
+
         const updatedCart = get().cart.map((item) =>
           item.id === productId && item.size === size && item.color === color
             ? { ...item, quantity }
@@ -47,7 +46,6 @@ export const useCartStore = create()(
 
       clearCart: () => set({ cart: [] }),
 
-      // Computed
       get totalItems() {
         return get().cart.reduce((total, item) => total + item.quantity, 0);
       },
@@ -57,7 +55,7 @@ export const useCartStore = create()(
       },
     }),
     {
-      name: "wearo-cart", // localStorage key
+      name: "wearo-cart",
     }
   )
 );
