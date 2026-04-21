@@ -3,7 +3,20 @@ const nextConfig = {
   /* config options here */
   reactCompiler: true,
   images: {
-    domains: ['prod-img.thesouledstore.com', 'images.pexels.com'],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "prod-img.thesouledstore.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.pexels.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
   },
 };
 
