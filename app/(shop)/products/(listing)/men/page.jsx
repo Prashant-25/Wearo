@@ -3,7 +3,7 @@ import ProductGrid from "@/components/ProductGrid";
 async function getMenProducts() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products?gender=1`, {
-      next: { revalidate: 10 }
+      next: { revalidate: 60 }
     });
     if (!res.ok) return [];
     const resObj = await res.json()
