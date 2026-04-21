@@ -4,11 +4,11 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { 
-  ChevronRight, 
-  MapPin, 
-  CreditCard, 
-  Truck, 
+import {
+  ChevronRight,
+  MapPin,
+  CreditCard,
+  Truck,
   ShoppingBag,
   ArrowLeft,
   Lock,
@@ -22,10 +22,12 @@ import { Separator } from "@/components/ui/separator";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, subtotal, clearCart } = useCartStore();
+  const { cart, clearCart } = useCartStore();
   const [mounted, setMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [step, setStep] = useState(1); // 1: Contact, 2: Shipping, 3: Payment
+
+  const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   useEffect(() => {
     setMounted(true);
@@ -52,7 +54,7 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = () => {
     setIsProcessing(true);
-    
+
     const newOrder = {
       id: `WRO-${Math.floor(100000 + Math.random() * 900000)}`,
       date: new Date().toISOString().split('T')[0],
@@ -72,7 +74,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-black">
       <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-0 lg:divide-x divide-zinc-100 dark:divide-zinc-800">
-        
+
         {/* Left Side: Checkout Form */}
         <div className="lg:col-span-7 px-4 sm:px-8 lg:px-12 py-10 md:py-16">
           <div className="max-w-xl mx-auto lg:mx-0">
@@ -98,7 +100,7 @@ export default function CheckoutPage() {
                   <button onClick={() => setStep(1)} className="text-xs font-bold text-indigo-500 hover:text-indigo-600 underline">Edit</button>
                 )}
               </div>
-              
+
               {step === 1 ? (
                 <div className="space-y-4 animate-in fade-in duration-500">
                   <Input placeholder="Email Address" type="email" className="h-12 text-base rounded-xl border-zinc-200" />
@@ -149,51 +151,51 @@ export default function CheckoutPage() {
 
             {/* Step 3: Payment Information */}
             <section className={step >= 3 ? "mb-12" : "opacity-30 pointer-events-none"}>
-               <h2 className="text-xl font-bold flex items-center gap-3 mb-6">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${step === 3 ? "bg-zinc-100 dark:bg-zinc-900" : "bg-transparent border border-zinc-200"}`}>3</div>
-                  Payment Method
-                </h2>
+              <h2 className="text-xl font-bold flex items-center gap-3 mb-6">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${step === 3 ? "bg-zinc-100 dark:bg-zinc-900" : "bg-transparent border border-zinc-200"}`}>3</div>
+                Payment Method
+              </h2>
 
-                {step === 3 && (
-                  <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-500">
-                    <div className="p-6 border-2 border-zinc-900 dark:border-white rounded-2xl bg-zinc-50 dark:bg-zinc-900">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="font-bold">Credit/Debit Card</span>
-                        <div className="flex gap-2">
-                           <div className="w-8 h-5 bg-blue-600 rounded" /> {/* Visa Mock icon */}
-                           <div className="w-8 h-5 bg-red-600 rounded" />  {/* MC Mock icon */}
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        <Input placeholder="Card Number" className="h-12 border-zinc-200" />
-                        <div className="grid grid-cols-2 gap-4">
-                          <Input placeholder="MM / YY" className="h-12 border-zinc-200" />
-                          <Input placeholder="CVV" className="h-12 border-zinc-200" />
-                        </div>
+              {step === 3 && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-500">
+                  <div className="p-6 border-2 border-zinc-900 dark:border-white rounded-2xl bg-zinc-50 dark:bg-zinc-900">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-bold">Credit/Debit Card</span>
+                      <div className="flex gap-2">
+                        <div className="w-8 h-5 bg-blue-600 rounded" /> {/* Visa Mock icon */}
+                        <div className="w-8 h-5 bg-red-600 rounded" />  {/* MC Mock icon */}
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-3 text-sm text-zinc-500 px-2 pb-4">
-                      <Lock size={14} className="text-green-500" />
-                      Your payment is secured with industry-standard encryption.
+                    <div className="space-y-4">
+                      <Input placeholder="Card Number" className="h-12 border-zinc-200" />
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input placeholder="MM / YY" className="h-12 border-zinc-200" />
+                        <Input placeholder="CVV" className="h-12 border-zinc-200" />
+                      </div>
                     </div>
-
-                    <Button 
-                      onClick={handlePlaceOrder} 
-                      disabled={isProcessing}
-                      className="w-full h-14 rounded-full text-lg font-bold shadow-xl shadow-zinc-900/10 active:scale-[0.98] transition-all"
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Processing Order...
-                        </>
-                      ) : (
-                        `Pay $${total}`
-                      )}
-                    </Button>
                   </div>
-                )}
+
+                  <div className="flex items-center gap-3 text-sm text-zinc-500 px-2 pb-4">
+                    <Lock size={14} className="text-green-500" />
+                    Your payment is secured with industry-standard encryption.
+                  </div>
+
+                  <Button
+                    onClick={handlePlaceOrder}
+                    disabled={isProcessing}
+                    className="w-full h-14 rounded-full text-lg font-bold shadow-xl shadow-zinc-900/10 active:scale-[0.98] transition-all"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Processing Order...
+                      </>
+                    ) : (
+                      `Pay $${total}`
+                    )}
+                  </Button>
+                </div>
+              )}
             </section>
           </div>
         </div>
@@ -202,8 +204,8 @@ export default function CheckoutPage() {
         <aside className="lg:col-span-5 bg-zinc-50/50 dark:bg-zinc-900/20 px-4 sm:px-8 lg:px-12 py-10 md:py-16 h-full">
           <div className="max-w-md mx-auto">
             <h3 className="text-lg font-bold mb-8 flex items-center gap-2">
-               <ShoppingBag size={20} />
-               Order Summary
+              <ShoppingBag size={20} />
+              Order Summary
             </h3>
 
             {/* Item List */}
@@ -214,7 +216,7 @@ export default function CheckoutPage() {
                     {item.image ? (
                       <Image src={item.image} alt={item.name} fill className="object-cover" />
                     ) : (
-                       <div className="flex items-center justify-center h-full text-[10px] text-zinc-400">IMG</div>
+                      <div className="flex items-center justify-center h-full text-[10px] text-zinc-400">IMG</div>
                     )}
                     <div className="absolute top-[-5px] right-[-5px] w-5 h-5 bg-zinc-900 dark:bg-zinc-700 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
                       {item.quantity}
@@ -235,34 +237,34 @@ export default function CheckoutPage() {
 
             {/* Calculations */}
             <div className="space-y-4 text-sm">
-               <div className="flex justify-between text-zinc-500">
-                  <span>Subtotal</span>
-                  <span className="font-bold text-zinc-900 dark:text-white">${subtotal}</span>
-               </div>
-               <div className="flex justify-between text-zinc-500">
-                  <span>Shipping</span>
-                  {shipping === 0 ? (
-                    <span className="text-green-600 font-bold uppercase text-[11px] tracking-widest">Free</span>
-                  ) : (
-                    <span className="font-bold text-zinc-900 dark:text-white">${shipping}</span>
-                  )}
-               </div>
-               <div className="flex justify-between text-zinc-500">
-                  <span>Tax (Estimated)</span>
-                  <span className="font-bold text-zinc-900 dark:text-white">${tax}</span>
-               </div>
+              <div className="flex justify-between text-zinc-500">
+                <span>Subtotal</span>
+                <span className="font-bold text-zinc-900 dark:text-white">${subtotal}</span>
+              </div>
+              <div className="flex justify-between text-zinc-500">
+                <span>Shipping</span>
+                {shipping === 0 ? (
+                  <span className="text-green-600 font-bold uppercase text-[11px] tracking-widest">Free</span>
+                ) : (
+                  <span className="font-bold text-zinc-900 dark:text-white">${shipping}</span>
+                )}
+              </div>
+              <div className="flex justify-between text-zinc-500">
+                <span>Tax (Estimated)</span>
+                <span className="font-bold text-zinc-900 dark:text-white">${tax}</span>
+              </div>
             </div>
 
             <Separator className="my-6 bg-zinc-200 dark:bg-zinc-800" />
 
             <div className="flex justify-between text-xl font-black">
-               <span>Total</span>
-               <div className="flex items-baseline gap-1">
-                  <span className="text-xs text-zinc-400 font-normal">USD</span>
-                  <span>${total}</span>
-               </div>
+              <span>Total</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-xs text-zinc-400 font-normal">USD</span>
+                <span>${total}</span>
+              </div>
             </div>
-            
+
             {/* Promo Code Mock */}
             <div className="mt-8 flex gap-2">
               <Input placeholder="Discount code" className="h-11 rounded-xl bg-white dark:bg-zinc-900" />
