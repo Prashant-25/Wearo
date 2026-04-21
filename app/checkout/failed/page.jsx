@@ -68,18 +68,18 @@ export default function PaymentFailedPage() {
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-          <Button asChild size="lg" className="w-full rounded-full h-14">
+          <div className="w-full rounded-full h-14">
             <Link href="/cart">
               <RefreshCw size={18} />
               Retry Payment
             </Link>
-          </Button>
-          <Button asChild variant="outline" size="lg">
+          </div>
+          <div className="w-full rounded-full h-14">
             <Link href="/products">
               <ArrowLeft size={18} />
               Back to Shop
             </Link>
-          </Button>
+          </div>
         </div>
 
         <div className="mt-16 text-zinc-400 text-sm flex items-center gap-2">
