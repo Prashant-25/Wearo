@@ -36,7 +36,23 @@ export default function Navbar() {
   const cartItemsCount = useCartStore((state) => state.cart.length);
   const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
   const { data: session, status } = useSession();
-  console.log(session, status)
+  console.log(
+    `
+
+
+
+ /$$      /$$                                        
+| $$  /$ | $$                                        
+| $$ /$$$| $$  /$$$$$$   /$$$$$$   /$$$$$$   /$$$$$$ 
+| $$/$$ $$ $$ /$$__  $$ |____  $$ /$$__  $$ /$$__  $$
+| $$$$_  $$$$| $$$$$$$$  /$$$$$$$| $$  \__/| $$  \ $$
+| $$$/ \  $$$| $$_____/ /$$__  $$| $$      | $$  | $$
+| $$/   \  $$|  $$$$$$$|  $$$$$$$| $$      |  $$$$$$/
+|__/     \__/ \_______/ \_______/|__/       \______/ 
+                                                     
+                                                     
+                                                     
+`)
   const [mounted, setMounted] = useState(false);
 
   const handleLogout = async () => {
