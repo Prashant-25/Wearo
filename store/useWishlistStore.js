@@ -8,6 +8,8 @@ export const useWishlistStore = create()(
     (set, get) => ({
       wishlist: [],
 
+      setWishlist: (wishlist) => set({ wishlist }),
+
       // Actions
       toggleWishlist: (product) => {
         const currentWishlist = get().wishlist;

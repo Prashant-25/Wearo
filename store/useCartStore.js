@@ -8,6 +8,8 @@ export const useCartStore = create()(
     (set, get) => ({
       cart: [],
 
+      setCart: (cart) => set({ cart }),
+
       addItem: (product, size = "M", color = "Default") => {
         const currentCart = get().cart;
         const existingItemIndex = currentCart.findIndex(

@@ -9,6 +9,8 @@ export const useAddressStore = create()(
       addresses: [],
       selectedAddressId: null,
 
+      setAddresses: (addresses) => set({ addresses }),
+
       addAddress: (address) => {
         const newAddress = {
           ...address,
@@ -54,6 +56,8 @@ export const useAddressStore = create()(
         const state = get();
         return state.addresses.find((a) => a.id === state.selectedAddressId) || null;
       },
+
+      clearAddress: () => set({ addresses: [], selectedAddressId: null }),
     }),
     {
       name: "wearo-addresses",

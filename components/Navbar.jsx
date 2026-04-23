@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import { useAddressStore } from "@/store/useAddressStore";
+import { useOrderStore } from "@/store/useOrderStore";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +19,6 @@ import {
 const navLinks = [
   { label: "Men", href: "/products/men" },
   { label: "Women", href: "/products/women" },
-  { label: "Oversized", href: "/products/oversized" },
   { label: "New Arrivals", href: "/products/new-arrivals" },
   { label: "Collections", href: "/collections" },
 ];
@@ -27,12 +28,27 @@ import { Search } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
+  const clearCart = useCartStore((state) => state.clearCart);
+  const clearWishlist = useWishlistStore((state) => state.clearWishlist);
+  const clearAddress = useAddressStore((state) => state.clearAddress);
+  const clearOrders = useOrderStore((state) => state.clearOrders);
   const pathname = usePathname();
   const cartItemsCount = useCartStore((state) => state.cart.length);
   const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
   const { data: session, status } = useSession();
   console.log(session, status)
   const [mounted, setMounted] = useState(false);
+
+  const handleLogout = async () => {
+    clearCart();
+    clearAddress();
+    clearOrders();
+    clearWishlist();
+
+    await signOut({
+      callbackUrl: "/login"
+    });
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -200,7 +216,7 @@ export default function Navbar() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/login" })} className="cursor-pointer text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600">
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:bg-red-50 dark:focus:bg-red-950/50 focus:text-red-600">
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent> :
