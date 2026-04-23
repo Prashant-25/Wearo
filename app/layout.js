@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Providers from "./providers"
+import { Toaster } from "@/components/ui/sonner"
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -25,6 +26,18 @@ export default function RootLayout({ children }) {
         <body className="min-h-full flex flex-col">
           <Navbar />
           {children}
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                borderRadius: '12px',
+                padding: '16px 20px',
+                fontSize: '14px',
+                fontWeight: 500,
+              },
+            }}
+          />
           {/* <Footer /> */}
         </body>
       </Providers>

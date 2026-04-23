@@ -252,16 +252,6 @@ export default function RegisterPage() {
                         </Button>
                     </form>
 
-                    <div className="my-6 flex items-center gap-4">
-                        <Separator className="flex-1" />
-                        <span className="text-xs text-muted-foreground uppercase tracking-widest font-medium">or</span>
-                        <Separator className="flex-1" />
-                    </div>
-
-                    <Button variant="outline" size="lg" className="w-full h-11 gap-2" type="button">
-                        Continue with Google
-                    </Button>
-
                     <p className="text-center text-sm text-muted-foreground mt-7">
                         Already have an account? <Link href="/login" className="text-foreground font-semibold hover:underline">Sign in</Link>
                     </p>

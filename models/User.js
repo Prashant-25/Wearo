@@ -3,9 +3,14 @@ import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  googleId: { type: String },
   email: { type: String, required: true, unique: true },
   password: { type: String, select: false },
   image: { type: String },
+  provider: {
+    type: [String],
+    default: ["email"],
+  },
   role: {
     type: String,
     enum: ["user", "admin"],

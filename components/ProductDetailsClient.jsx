@@ -7,8 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import { useSession } from "next-auth/react";
+import { useRouter } from 'next/navigation'
+import { toast } from "sonner";
 
 export default function ProductDetailsClient({ product }) {
+  const { data: session, status } = useSession();
+  const router = useRouter()
+
   // Zustand stores
   const addItem = useCartStore((state) => state.addItem);
   const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
@@ -25,10 +31,20 @@ export default function ProductDetailsClient({ product }) {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   const handleWishlist = () => {
+    if (status === 'unauthenticated') {
+      toast.warning('Please login to add items to wishlist');
+      // router.push('/login');
+      return;
+    }
     toggleWishlist(product);
   };
 
   const handleAddToCart = () => {
+    if (status === 'unauthenticated') {
+      toast.warning('Please login to add items to cart');
+      // router.push('/login');
+      return;
+    }
     addItem(product, selectedSize, selectedColor);
     setIsAddedToCart(true);
     setTimeout(() => setIsAddedToCart(false), 2000);
@@ -62,7 +78,7 @@ export default function ProductDetailsClient({ product }) {
           {/* Main Image */}
           <div className="w-full aspect-[4/5] bg-zinc-100 dark:bg-zinc-900 relative rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm">
             {product.images && product.images.length > 0 ? (
-              <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
+              <Image src={product.images[0].replace('?w=300&dpr=1', '')} alt={product.name} fill className="object-cover" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-zinc-300 dark:text-zinc-700 text-lg">
                 Main Image

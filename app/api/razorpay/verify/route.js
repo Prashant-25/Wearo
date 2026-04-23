@@ -36,6 +36,7 @@ export async function POST(req) {
         message: "Payment verified successfully",
         paymentId: razorpay_payment_id,
         orderId: razorpay_order_id,
+        orderDate: order.updatedAt,
       });
     } else {
       await connectDB();

@@ -95,7 +95,7 @@ export default function CartPage() {
             if (verifyData.success) {
               // Save order locally and redirect
               const newOrder = {
-                id: `WRO-${Math.floor(100000 + Math.random() * 900000)}`,
+                id: data.order,
                 date: new Date().toISOString().split("T")[0],
                 total: total,
                 status: "Processing",
@@ -184,8 +184,8 @@ export default function CartPage() {
               <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-6 pb-8 border-b border-zinc-100 dark:border-zinc-800 last:border-0">
                 {/* Product Image */}
                 <div className="relative w-24 h-32 sm:w-32 sm:h-40 bg-zinc-100 dark:bg-zinc-900 overflow-hidden rounded-xl shrink-0">
-                  {item.image ? (
-                    <Image src={item.image} alt={item.name} fill className="object-cover" />
+                  {item.images?.[0] ? (
+                    <Image src={item.images?.[0]} alt={item.product} fill className="object-cover" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-[10px] text-zinc-400 uppercase text-center p-2">
                       No Image
@@ -250,7 +250,7 @@ export default function CartPage() {
           </div>
 
           {/* Order Summary */}
-          <div className="flex-[1] lg:sticky lg:top-32 h-fit">
+          <div className="flex-1 lg:sticky lg:top-32 h-fit">
             <div className="bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 border border-zinc-100 dark:border-zinc-800">
               <h2 className="text-xl font-bold mb-6">Order Summary</h2>
 

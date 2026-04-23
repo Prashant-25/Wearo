@@ -27,9 +27,10 @@ export async function GET(request) {
         const pipeline = buildProductPipeline(filters)
 
         const products = await Product.aggregate(pipeline);
+        console.log("Products", products)
 
         // Transform for frontend compatibility
-        const transformedProducts = products.map(p => {
+        const transformedProducts = products?.[0]?.products?.map(p => {
             const productObj = p;
             return {
                 ...productObj,
@@ -41,7 +42,7 @@ export async function GET(request) {
 
         return NextResponse.json({
             success: true,
-            count: transformedProducts.length,
+            count: products?.[0]?.totalCount?.[0]?.count,
             data: transformedProducts
         });
     } catch (error) {

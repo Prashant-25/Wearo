@@ -15,16 +15,14 @@ export default withAuth(
     },
     {
         callbacks: {
-            // This middleware only runs if authorized() returns true
             authorized: ({ token }) => !!token,
         },
         pages: {
-            signIn: "/login", // Redirect here if not logged in
+            signIn: "/login",
         },
     }
 );
 
-// Define which routes this middleware applies to
 export const config = {
     matcher: [
         "/dashboard/:path*",

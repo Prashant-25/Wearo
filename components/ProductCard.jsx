@@ -4,19 +4,44 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Heart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import { useWishlistStore } from "@/store/useWishlistStore";
+import { useCartStore } from "@/store/useCartStore";
+import { Button } from "./ui/button";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 export default function ProductCard({ product }) {
+  const { data: session, status } = useSession();
   const toggleWishlist = useWishlistStore((state) => state.toggleWishlist);
+  const addItem = useCartStore((state) => state.addItem);
+
   const isWishlisted = useWishlistStore((state) =>
     state.wishlist.some(item => item.id === product.id)
+  );
+
+  const isAddedToCart = useCartStore((state) =>
+    state.cart.some(item => item.id === product.id)
   );
 
   const handleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (status === 'unauthenticated') {
+      toast.warning('Please login to add items to wishlist');
+      return;
+    }
     toggleWishlist(product);
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (status === 'unauthenticated') {
+      toast.warning('Please login to add items to cart');
+      return;
+    }
+    addItem(product);
   };
 
   return (
@@ -29,7 +54,7 @@ export default function ProductCard({ product }) {
         {product.images?.[0] ? (
           <Image
             src={product.images?.[0]}
-            alt={product.name}
+            alt={product?.name || product?.product}
             fill
             className="object-cover rounded-2xl transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -74,7 +99,7 @@ export default function ProductCard({ product }) {
         {/* Brand + Rating */}
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold text-zinc-900 dark:text-white truncate pr-2">
-            {product.name.replace(/TSS|Souled/gi, "Wearo").trim()}
+            {product.name?.replace(/TSS|Souled/gi, "Wearo").trim()}
           </span>
           {product.avg_rating && (
             <div className="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400 shrink-0">
@@ -96,7 +121,7 @@ export default function ProductCard({ product }) {
 
         {/* Product name */}
         <p className="text-sm text-zinc-400 dark:text-zinc-500 mb-3 leading-snug line-clamp-1">
-          {product.category.replace(/TSS|Souled/gi, "Wearo").trim()}
+          {product.category?.replace(/TSS|Souled/gi, "Wearo").trim()}
         </p>
 
         {/* Price + Primary Action */}
@@ -111,6 +136,10 @@ export default function ProductCard({ product }) {
               </span>
             )}
           </div>
+
+          <button disabled={isAddedToCart} onClick={handleAddToCart} className="text-sm font-bold text-white bg-black p-2.5 rounded-full flex cursor-pointer items-center gap-1 transition-colors">
+            <ShoppingCart size={16} />
+          </button>
         </div>
       </div>
     </Link>

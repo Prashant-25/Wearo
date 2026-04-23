@@ -31,7 +31,7 @@ export default function Navbar() {
   const cartItemsCount = useCartStore((state) => state.cart.length);
   const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
   const { data: session, status } = useSession();
-
+  console.log(session, status)
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-zinc-100 dark:border-white/5">
+    <header className="sticky top-0 z-51 w-full bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-zinc-100 dark:border-white/5">
       <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <nav className="flex items-center justify-between h-16 sm:h-[72px]">
           {/* Logo */}
@@ -186,7 +186,7 @@ export default function Navbar() {
                   </svg>}
                 </button>
               </DropdownMenuTrigger>
-              {session ? <DropdownMenuContent align="end" className="w-48">
+              {session ? <DropdownMenuContent align="end" className="w-48 z-99">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
@@ -204,7 +204,7 @@ export default function Navbar() {
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent> :
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-48 z-99">
                   <DropdownMenuItem asChild className="cursor-pointer text-cyan-600 focus:text-cyan-600">
                     <Link href="/login" >Login</Link>
                   </DropdownMenuItem>

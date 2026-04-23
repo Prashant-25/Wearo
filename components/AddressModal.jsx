@@ -78,11 +78,10 @@ function AddAddressForm({ onSave, onCancel }) {
             key={value}
             type="button"
             onClick={() => handleChange("type", value)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border ${
-              form.type === value
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border ${form.type === value
                 ? "bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-black dark:border-white"
                 : "bg-transparent text-zinc-500 border-zinc-200 dark:border-zinc-700 hover:border-zinc-400"
-            }`}
+              }`}
           >
             <Icon size={14} />
             {label}
@@ -212,22 +211,27 @@ function AddressCard({ address, isSelected, onSelect, onDelete }) {
     ADDRESS_TYPES.find((t) => t.value === address.type)?.label || "Address";
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => onSelect(address.id)}
-      className={`w-full text-left p-4 rounded-2xl border-2 transition-all relative group ${
-        isSelected
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(address.id);
+        }
+      }}
+      className={`w-full text-left p-4 rounded-2xl border-2 transition-all relative group cursor-pointer ${isSelected
           ? "border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900"
           : "border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-600"
-      }`}
+        }`}
     >
       {/* Selected indicator */}
       <div
-        className={`absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center transition-all ${
-          isSelected
+        className={`absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center transition-all ${isSelected
             ? "bg-zinc-900 dark:bg-white"
             : "border-2 border-zinc-200 dark:border-zinc-700"
-        }`}
+          }`}
       >
         {isSelected && <Check size={14} className="text-white dark:text-black" />}
       </div>
@@ -246,11 +250,10 @@ function AddressCard({ address, isSelected, onSelect, onDelete }) {
 
       <div className="flex items-start gap-3 pr-8">
         <div
-          className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-            isSelected
+          className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isSelected
               ? "bg-zinc-900 dark:bg-white text-white dark:text-black"
               : "bg-zinc-100 dark:bg-zinc-800 text-zinc-500"
-          }`}
+            }`}
         >
           <TypeIcon size={14} />
         </div>
@@ -270,7 +273,7 @@ function AddressCard({ address, isSelected, onSelect, onDelete }) {
           <p className="text-xs text-zinc-400 mt-1">{address.phone}</p>
         </div>
       </div>
-    </button>
+    </div>
   );
 }
 

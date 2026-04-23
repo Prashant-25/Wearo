@@ -218,7 +218,7 @@ export default function LoginPage() {
                         type="button"
                         variant="outline"
                         size="lg"
-                        className="w-full h-11 gap-2"
+                        className="w-full h-11 gap-2 cursor-pointer"
                         onClick={() => signIn("google", { callbackUrl: "/" })}
                     >
                         <svg className="size-4" viewBox="0 0 24 24">
