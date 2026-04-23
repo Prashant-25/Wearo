@@ -7,7 +7,6 @@ async function getCollectionProducts(id) {
         });
 
         const resObj = await res.json()
-        console.log(resObj)
         return resObj;
     } catch (error) {
         console.error("Fetch products failed:", error);

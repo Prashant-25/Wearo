@@ -11,20 +11,23 @@ export const useAddressStore = create()(
 
       setAddresses: (addresses) => set({ addresses }),
 
-      addAddress: (address) => {
-        const newAddress = {
-          ...address,
-          id: `addr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-          createdAt: new Date().toISOString(),
-        };
-        const currentAddresses = get().addresses;
-        const isFirst = currentAddresses.length === 0;
-        set({
-          addresses: [...currentAddresses, newAddress],
-          // Auto-select if it's the first address
-          selectedAddressId: isFirst ? newAddress.id : get().selectedAddressId,
+      addAddress: async (address) => {
+        const response = await fetch("/api/user/addresses", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            address,
+          }),
         });
-        return newAddress;
+        const data = await response.json();
+        set({
+          addresses: [...data.addresses],
+          // Auto-select if it's the first address
+          selectedAddressId: data.addresses[data.addresses.length - 1].id,
+        });
+        return data.addresses[data.addresses.length - 1];
       },
 
       removeAddress: (id) => {

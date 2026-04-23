@@ -101,8 +101,8 @@ export default function OrdersPage() {
                   {order.items.map((item, idx) => (
                     <div key={`${item.id}-${idx}`} className="flex gap-4">
                       <div className="relative w-16 h-20 bg-zinc-100 dark:bg-zinc-800 rounded-xl overflow-hidden shrink-0 border border-zinc-100 dark:border-zinc-800">
-                        {item.images?.[0] ? (
-                          <Image src={item.images?.[0]} alt={item.product} fill className="object-cover" />
+                        {item.image ? (
+                          <Image src={item.image} alt={item.name} fill className="object-cover" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-[10px] text-zinc-400">IMG</div>
                         )}

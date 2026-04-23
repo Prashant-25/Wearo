@@ -30,6 +30,8 @@ export async function POST(req) {
       return {
         ...product,
         quantity: item.quantity,
+        size: item.size,
+        color: item.color
       }
     })
 
@@ -55,6 +57,8 @@ export async function POST(req) {
         image: item.images[0],
         price: item.price,
         product: item._id,
+        size: item.size,
+        color: item.color
       })),
       shippingAddress: {
         fullName: address.fullName,
@@ -64,7 +68,7 @@ export async function POST(req) {
         city: address.city,
         state: address.state,
         zipCode: address.zipCode,
-        country: address.country
+        country: address.country || "India"
       },
       paymentMethod: "Razorpay",
       paymentResult: {

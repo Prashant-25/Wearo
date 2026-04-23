@@ -27,7 +27,6 @@ export async function GET(request) {
         const pipeline = buildProductPipeline(filters)
 
         const products = await Product.aggregate(pipeline);
-        console.log("Products", products)
 
         // Transform for frontend compatibility
         const transformedProducts = products?.[0]?.products?.map(p => {

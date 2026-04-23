@@ -8,6 +8,8 @@ export const useOrderStore = create()(
     (set, get) => ({
       orders: [],
 
+      setOrders: (orders) => set({ orders }),
+
       // Actions
       addOrder: (order) => {
         set((state) => ({

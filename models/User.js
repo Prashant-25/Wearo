@@ -17,12 +17,14 @@ const UserSchema = new mongoose.Schema({
     default: "user"
   },
   addresses: [{
+    fullName: String,
+    phone: String,
     street: String,
+    apartment: String,
     city: String,
     state: String,
     zipCode: String,
-    country: String,
-    isDefault: { type: Boolean, default: false }
+    addressType: { type: String, default: "home" }
   }],
   wishlist: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -45,6 +47,10 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
+
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.User;
+}
 
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);

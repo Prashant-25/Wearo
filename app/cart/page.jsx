@@ -36,8 +36,6 @@ export default function CartPage() {
   const shipping = subtotal > 500 ? 0 : 50;
   const total = subtotal + shipping;
 
-  console.log(total)
-
   // Step 1: Open address modal when user clicks Pay
   const handlePayClick = () => {
     setShowAddressModal(true);
@@ -52,11 +50,15 @@ export default function CartPage() {
   // Step 3: Create order & open Razorpay
   const startRazorpayPayment = async (address) => {
     setIsProcessing(true);
-
     try {
       // 1. Create a Razorpay order on the server
 
-      const items = cart.map(item => { return { id: item._id, quantity: item.quantity } })
+      const items = cart.map(item => ({
+        id: item.id || item._id,
+        quantity: item.quantity,
+        size: item.size,
+        color: item.color
+      }))
       const res = await fetch("/api/razorpay/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -96,12 +98,21 @@ export default function CartPage() {
               // Save order locally and redirect
               const newOrder = {
                 id: data.order,
-                date: new Date().toISOString().split("T")[0],
-                total: total,
-                status: "Processing",
+                date: verifyData?.order?.createdAt
+                  ? new Date(verifyData.order.createdAt).toISOString().split("T")[0]
+                  : "",
+                total: verifyData?.order?.totalPrice,
+                status: verifyData?.order?.isDelivered ? "Delivered" : "Processing",
                 paymentId: response.razorpay_payment_id,
                 shippingAddress: address,
-                items: [...cart],
+                items: [...cart.map((item) => ({
+                  name: item.name,
+                  price: item.price,
+                  quantity: item.quantity,
+                  size: item.size,
+                  color: item.color,
+                  image: item.images?.[0]
+                }))],
               };
 
               addOrder(newOrder);
@@ -110,7 +121,8 @@ export default function CartPage() {
             } else {
               router.push("/checkout/failed?reason=Payment+verification+failed.+Please+contact+support.");
             }
-          } catch {
+          } catch (error) {
+            console.error(error);
             router.push("/checkout/failed?reason=Payment+verification+failed.+Please+try+again.");
           }
         },
@@ -185,7 +197,7 @@ export default function CartPage() {
                 {/* Product Image */}
                 <div className="relative w-24 h-32 sm:w-32 sm:h-40 bg-zinc-100 dark:bg-zinc-900 overflow-hidden rounded-xl shrink-0">
                   {item.images?.[0] ? (
-                    <Image src={item.images?.[0]} alt={item.product} fill className="object-cover" />
+                    <Image src={item.images?.[0]} alt={item.product || "Item Image"} fill className="object-cover" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-[10px] text-zinc-400 uppercase text-center p-2">
                       No Image

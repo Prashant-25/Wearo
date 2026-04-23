@@ -37,6 +37,7 @@ export async function POST(req) {
         paymentId: razorpay_payment_id,
         orderId: razorpay_order_id,
         orderDate: order.updatedAt,
+        order
       });
     } else {
       await connectDB();

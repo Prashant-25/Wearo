@@ -11,6 +11,8 @@ const plusJakarta = Plus_Jakarta_Sans({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
+import StoreInitializer from "@/components/StoreInitializer";
+
 export const metadata = {
   title: "Wearo",
   description: "Discover trendy apparel, unique designs, and high-quality clothing. A modern ecommerce clothing store built for a seamless shopping experience.",
@@ -23,6 +25,7 @@ export default function RootLayout({ children }) {
       className={`${plusJakarta.variable} h-full antialiased`}
     >
       <Providers>
+        <StoreInitializer />
         <body className="min-h-full flex flex-col">
           <Navbar />
           {children}
