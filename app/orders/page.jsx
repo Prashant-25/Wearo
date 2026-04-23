@@ -80,7 +80,7 @@ export default function OrdersPage() {
                 </div>
                 <div>
                   <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest mb-0.5">Total</p>
-                  <p className="text-sm font-semibold">${order.total}</p>
+                  <p className="text-sm font-semibold">₹{order.total}</p>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest mb-0.5">Order ID</p>
@@ -109,7 +109,7 @@ export default function OrdersPage() {
                       </div>
                       <div className="flex flex-col justify-center">
                         <h4 className="text-sm font-bold leading-tight">{item.name}</h4>
-                        <p className="text-xs text-zinc-500 mt-1">Qty: {item.quantity} · ${item.price}</p>
+                        <p className="text-xs text-zinc-500 mt-1">Qty: {item.quantity} · ₹{item.price}</p>
                       </div>
                     </div>
                   ))}
