@@ -36,8 +36,11 @@ export default function Navbar() {
   const cartItemsCount = useCartStore((state) => state.cart.length);
   const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
   const { data: session, status } = useSession();
-  console.log(
-    `
+  const [showLogo, setShowLogo] = useState(true);
+  (() => {
+    if (showLogo) {
+      console.log(
+        `
 
 
 
@@ -53,6 +56,9 @@ export default function Navbar() {
                                                      
                                                      
 `)
+      setShowLogo(false);
+    }
+  })();
   const [mounted, setMounted] = useState(false);
 
   const handleLogout = async () => {

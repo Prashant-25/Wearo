@@ -47,9 +47,8 @@ export default function CategorySection() {
             Explore our curated styles
           </p>
         </div>
-        <Link
-          href="/categories"
-          className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
+        <div
+          className="hidden sm:inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
         >
           View All
           <svg
@@ -66,7 +65,7 @@ export default function CategorySection() {
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
           </svg>
-        </Link>
+        </div>
       </div>
 
       {/* Category Cards Grid */}
