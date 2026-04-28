@@ -4,15 +4,34 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { X, ChevronDown, Filter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { usePathname } from 'next/navigation'
 
 export default function FilterSidebar() {
     const router = useRouter()
+    const route = usePathname()
+
+    console.log("Current Route: ", route)
+
     const searchParams = useSearchParams()
     const [isOpen, setIsOpen] = useState(false)
 
-    const [priceRange, setPriceRange] = useState({
-        min: parseInt(searchParams.get('min')) || 0,
-        max: parseInt(searchParams.get('max')) || 5000,
+    const getParamArray = (key) => {
+        const val = searchParams.get(key)
+        return val ? val.split(',') : []
+    }
+
+    const [tempFilters, setTempFilters] = useState({
+        category: getParamArray('category'),
+        fabric: getParamArray('fabric'),
+        sleeve: getParamArray('sleeve'),
+        neck: getParamArray('neck'),
+        fitType: getParamArray('fitType'),
+        gender: searchParams.get('gender') || (route.includes('/women') ? '2' : '1'),
+        size: getParamArray('size'),
+        color: getParamArray('color'),
+        rating: searchParams.get('rating') || '',
+        priceMin: searchParams.get('min') || '',
+        priceMax: searchParams.get('max') || '',
     })
 
     const currentFilters = {
@@ -31,14 +50,59 @@ export default function FilterSidebar() {
         tags: searchParams.get('tags') || '',
     }
 
-    const categories = ['All Products', "Men's Fashion", "Women's Fashion", 'Oversized', 'New Arrivals']
+    const categories = [
+        "T-Shirts & Tops",
+        "Shirts & Upperwear",
+        "Bottomwear",
+        "Footwear",
+        "Activewear",
+        "Basics"
+    ]
+
+    //     {
+    //   "T-Shirts & Tops": [
+    //     "T-Shirts",
+    //     "Oversized T-Shirts",
+    //     "Super Oversized T-Shirts",
+    //     "Oversized Full Sleeve T-Shirts",
+    //     "Relaxed Fit T-Shirts"
+    //   ],
+    //   "Shirts & Upperwear": [
+    //     "Shirts",
+    //     "Overshirts",
+    //     "Oversized Shirts",
+    //     "Utility Shirts",
+    //     "Relaxed Shirts",
+    //     "Textured Shirts",
+    //     "Cotton Linen Shirts",
+    //     "Holiday Shirts"
+    //   ],
+    //   "Bottomwear": [
+    //     "Jeans",
+    //     "Cargo Jeans"
+    //   ],
+    //   "Footwear": [
+    //     "Mid Top Sneakers",
+    //     "Low Top Sneakers"
+    //   ],
+    //   "Activewear": [
+    //     "Oversized Jerseys"
+    //   ],
+    //   "Basics": [
+    //     "Vests",
+    //     "Easy Fit Vests"
+    //   ]
+    // }
     const fabrics = ['Viscose', 'Cotton Linen', 'Cotton']
     const sleeves = ['Half Sleeves', 'Full Sleeves']
     const necks = ['Collared']
     const fitTypes = ['Regular Fit', 'Relaxed Fit', 'Oversized']
 
-    const genders = ['Men', 'Women', 'Unisex']
-    const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+    const genders = [
+        { label: 'Men', value: '1' },
+        { label: 'Women', value: '2' }
+    ]
+    const sizes = ['S', 'M', 'L']
     const colors = [
         { name: 'Black', value: '#000000' },
         { name: 'White', value: '#FFFFFF' },
@@ -57,42 +121,61 @@ export default function FilterSidebar() {
         { value: 1, label: 'All Ratings' },
     ]
 
-    const handleFilterChange = (filterType, value) => {
-        const params = new URLSearchParams(searchParams.toString())
-
-        if (value) {
-            params.set(filterType === 'priceMin' ? 'min' : filterType === 'priceMax' ? 'max' : filterType, value)
-        } else {
-            params.delete(filterType === 'priceMin' ? 'min' : filterType === 'priceMax' ? 'max' : filterType)
-        }
-
-        params.set('page', '1')
-        router.push(`?${params.toString()}`)
+    const handleFilterChange = (filterType, value, isSingle = false) => {
+        setTempFilters(prev => {
+            if (isSingle) {
+                return { ...prev, [filterType]: prev[filterType] === value ? '' : value }
+            }
+            const current = prev[filterType] || []
+            const next = current.includes(value)
+                ? current.filter(v => v !== value)
+                : [...current, value]
+            return { ...prev, [filterType]: next }
+        })
     }
 
     const handlePriceRangeChange = (type, value) => {
-        const newValue = parseInt(value) || 0
-        const updated = { ...priceRange, [type]: newValue }
+        const newValue = value === '' ? '' : parseInt(value) || 0
+        setTempFilters(prev => ({
+            ...prev,
+            [type === 'min' ? 'priceMin' : 'priceMax']: newValue
+        }))
+    }
 
-        // Ensure min doesn't exceed max and vice versa
-        if (type === 'min' && newValue > priceRange.max) {
-            updated.max = newValue
-        }
-        if (type === 'max' && newValue < priceRange.min) {
-            updated.min = newValue
-        }
-
-        setPriceRange(updated)
-
+    const handleApplyFilters = () => {
+        console.log('Applied Filters:', tempFilters)
         const params = new URLSearchParams(searchParams.toString())
-        params.set('min', updated.min)
-        params.set('max', updated.max)
+
+        Object.entries(tempFilters).forEach(([key, value]) => {
+            const paramKey = key === 'priceMin' ? 'min' : key === 'priceMax' ? 'max' : key
+            if (Array.isArray(value)) {
+                if (value.length > 0) {
+                    params.set(paramKey, value.join(','))
+                } else {
+                    params.delete(paramKey)
+                }
+            } else {
+                if (value !== '') {
+                    params.set(paramKey, value)
+                } else {
+                    params.delete(paramKey)
+                }
+            }
+        })
+
         params.set('page', '1')
         router.push(`?${params.toString()}`)
+        router.refresh()
+        setIsOpen(false)
     }
 
     const handleClearFilters = () => {
         router.push('?')
+        setTempFilters({
+            category: [], fabric: [], sleeve: [], neck: [], fitType: [],
+            gender: [], size: [], color: [], rating: [],
+            priceMin: '', priceMax: '',
+        })
         setIsOpen(false)
     }
 
@@ -145,12 +228,12 @@ export default function FilterSidebar() {
                             {categories.map((cat) => (
                                 <label key={cat} className="flex items-center gap-3 cursor-pointer group">
                                     <input
-                                        type="radio"
+                                        type="checkbox"
                                         name="category"
                                         value={cat}
-                                        checked={currentFilters.category === cat}
-                                        onChange={(e) => handleFilterChange('category', e.target.value)}
-                                        className="w-4 h-4 accent-cyan-600"
+                                        checked={tempFilters.category.includes(cat)}
+                                        onChange={() => handleFilterChange('category', cat)}
+                                        className="w-4 h-4 accent-cyan-600 rounded"
                                     />
                                     <span className="text-sm text-gray-700 group-hover:text-black">{cat}</span>
                                 </label>
@@ -165,8 +248,8 @@ export default function FilterSidebar() {
                                 <label key={fabric} className="flex items-center gap-3 cursor-pointer group">
                                     <input
                                         type="checkbox"
-                                        checked={currentFilters.fabric === fabric}
-                                        onChange={(e) => handleFilterChange('fabric', e.target.checked ? fabric : '')}
+                                        checked={tempFilters.fabric.includes(fabric)}
+                                        onChange={() => handleFilterChange('fabric', fabric)}
                                         className="w-4 h-4 accent-cyan-600 rounded"
                                     />
                                     <span className="text-sm text-gray-700 group-hover:text-black">{fabric}</span>
@@ -182,8 +265,8 @@ export default function FilterSidebar() {
                                 <label key={sleeve} className="flex items-center gap-3 cursor-pointer group">
                                     <input
                                         type="checkbox"
-                                        checked={currentFilters.sleeve === sleeve}
-                                        onChange={(e) => handleFilterChange('sleeve', e.target.checked ? sleeve : '')}
+                                        checked={tempFilters.sleeve.includes(sleeve)}
+                                        onChange={() => handleFilterChange('sleeve', sleeve)}
                                         className="w-4 h-4 accent-cyan-600 rounded"
                                     />
                                     <span className="text-sm text-gray-700 group-hover:text-black">{sleeve}</span>
@@ -199,8 +282,8 @@ export default function FilterSidebar() {
                                 <label key={neck} className="flex items-center gap-3 cursor-pointer group">
                                     <input
                                         type="checkbox"
-                                        checked={currentFilters.neck === neck}
-                                        onChange={(e) => handleFilterChange('neck', e.target.checked ? neck : '')}
+                                        checked={tempFilters.neck.includes(neck)}
+                                        onChange={() => handleFilterChange('neck', neck)}
                                         className="w-4 h-4 accent-cyan-600 rounded"
                                     />
                                     <span className="text-sm text-gray-700 group-hover:text-black">{neck}</span>
@@ -216,8 +299,8 @@ export default function FilterSidebar() {
                                 <label key={fitType} className="flex items-center gap-3 cursor-pointer group">
                                     <input
                                         type="checkbox"
-                                        checked={currentFilters.fitType === fitType}
-                                        onChange={(e) => handleFilterChange('fitType', e.target.checked ? fitType : '')}
+                                        checked={tempFilters.fitType.includes(fitType)}
+                                        onChange={() => handleFilterChange('fitType', fitType)}
                                         className="w-4 h-4 accent-cyan-600 rounded"
                                     />
                                     <span className="text-sm text-gray-700 group-hover:text-black">{fitType}</span>
@@ -227,21 +310,25 @@ export default function FilterSidebar() {
                     </FilterSection>
 
                     {/* Gender */}
-                    <FilterSection title="Gender">
-                        <div className="space-y-2">
-                            {genders.map((gender) => (
-                                <label key={gender} className="flex items-center gap-3 cursor-pointer group">
-                                    <input
-                                        type="checkbox"
-                                        checked={currentFilters.gender === gender}
-                                        onChange={(e) => handleFilterChange('gender', e.target.checked ? gender : '')}
-                                        className="w-4 h-4 accent-cyan-600 rounded"
-                                    />
-                                    <span className="text-sm text-gray-700 group-hover:text-black">{gender}</span>
-                                </label>
-                            ))}
-                        </div>
-                    </FilterSection>
+                    {!route.includes('/men') && !route.includes('/women') && (
+                        <FilterSection title="Gender">
+                            <div className="space-y-2">
+                                {genders.map((gender) => (
+                                    <label key={gender.value} className="flex items-center gap-3 cursor-pointer group">
+                                        <input
+                                            type="radio"
+                                            name="gender"
+                                            value={gender.value}
+                                            checked={tempFilters.gender === gender.value}
+                                            onChange={() => handleFilterChange('gender', gender.value, true)}
+                                            className="w-4 h-4 accent-cyan-600 rounded"
+                                        />
+                                        <span className="text-sm text-gray-700 group-hover:text-black">{gender.label}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </FilterSection>
+                    )}
 
                     {/* Size */}
                     <FilterSection title="Size">
@@ -249,10 +336,10 @@ export default function FilterSidebar() {
                             {sizes.map((size) => (
                                 <button
                                     key={size}
-                                    onClick={() => handleFilterChange('size', currentFilters.size === size ? '' : size)}
+                                    onClick={() => handleFilterChange('size', size)}
                                     className={`
                     px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                    ${currentFilters.size === size
+                    ${tempFilters.size.includes(size)
                                             ? 'bg-black text-white'
                                             : 'border border-gray-200 text-gray-700 hover:border-black'
                                         }
@@ -273,8 +360,7 @@ export default function FilterSidebar() {
                                     <input
                                         type="number"
                                         min="0"
-                                        max={priceRange.max}
-                                        value={priceRange.min}
+                                        value={tempFilters.priceMin}
                                         onChange={(e) => handlePriceRangeChange('min', e.target.value)}
                                         className="w-full px-2 py-1 bg-transparent text-center font-semibold text-black focus:outline-none"
                                     />
@@ -284,9 +370,7 @@ export default function FilterSidebar() {
                                     <label className="text-xs text-gray-600 block mb-1">Max</label>
                                     <input
                                         type="number"
-                                        min={priceRange.min}
-                                        max="5000"
-                                        value={priceRange.max}
+                                        value={tempFilters.priceMax}
                                         onChange={(e) => handlePriceRangeChange('max', e.target.value)}
                                         className="w-full px-2 py-1 bg-transparent text-center font-semibold text-black focus:outline-none"
                                     />
@@ -354,7 +438,7 @@ export default function FilterSidebar() {
                             </div> */}
 
                             <div className="text-sm text-gray-600 text-center">
-                                ₹{priceRange.min.toLocaleString()} — ₹{priceRange.max.toLocaleString()}
+                                ₹{Number(tempFilters.priceMin || 0).toLocaleString()} — ₹{Number(tempFilters.priceMax || 5000).toLocaleString()}
                             </div>
                         </div>
                     </FilterSection>
@@ -365,12 +449,12 @@ export default function FilterSidebar() {
                             {ratings.map((rating) => (
                                 <label key={rating.value} className="flex items-center gap-3 cursor-pointer group">
                                     <input
-                                        type="checkbox"
+                                        type="radio"
                                         name="rating"
                                         value={rating.value}
-                                        checked={currentFilters.rating === String(rating.value)}
-                                        onChange={(e) => handleFilterChange('rating', e.target.value)}
-                                        className="w-4 h-4 accent-cyan-600"
+                                        checked={tempFilters.rating === String(rating.value)}
+                                        onChange={() => handleFilterChange('rating', String(rating.value), true)}
+                                        className="w-4 h-4 accent-cyan-600 rounded"
                                     />
                                     <span className="text-sm text-gray-700 group-hover:text-black">{rating.label}</span>
                                 </label>
@@ -379,17 +463,22 @@ export default function FilterSidebar() {
                     </FilterSection>
                 </div>
 
-                {/* Footer - Clear Filters */}
-                {hasActiveFilters && (
-                    <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
-                        <Button
-                            onClick={handleClearFilters}
-                            className="w-full bg-gray-100 text-black hover:bg-gray-200"
-                        >
-                            Clear All Filters
-                        </Button>
-                    </div>
-                )}
+                {/* Footer - Clear & Apply Filters */}
+                <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 space-y-3">
+                    <Button
+                        onClick={handleApplyFilters}
+                        className="w-full bg-cyan-600 text-white hover:bg-cyan-700"
+                    >
+                        Apply Filters
+                    </Button>
+                    <Button
+                        onClick={handleClearFilters}
+                        variant="outline"
+                        className="w-full border-gray-200 text-gray-700 hover:bg-gray-50"
+                    >
+                        Clear All
+                    </Button>
+                </div>
             </aside>
         </>
     )

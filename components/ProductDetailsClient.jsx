@@ -28,7 +28,17 @@ export default function ProductDetailsClient({ product }) {
 
   const [selectedSize, setSelectedSize] = useState(defaultSize);
   const [selectedColor, setSelectedColor] = useState(defaultColor);
+  const [activeImage, setActiveImage] = useState(0);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 });
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomPos({ x, y });
+  };
 
   const handleWishlist = () => {
     if (status === 'unauthenticated') {
@@ -55,12 +65,19 @@ export default function ProductDetailsClient({ product }) {
       <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
 
         {/* Left: Image Gallery */}
-        <div className="flex-1 w-full flex flex-col-reverse md:flex-row gap-4 lg:sticky lg:top-32 h-fit">
+        <div className="lg:flex-[0.85] w-full flex flex-col-reverse md:flex-row gap-4 lg:sticky lg:top-32 h-fit">
           {/* Thumbnails */}
-          <div className="flex md:flex-col gap-4 overflow-x-auto md:w-24 shrink-0 pb-2 md:pb-0 hide-scrollbar">
+          <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-y-auto md:max-h-[600px] md:w-24 shrink-0 p-1 pb-2 md:pb-1 hide-scrollbar">
             {product.images && product.images.length > 0 ? (
               product.images.map((img, idx) => (
-                <button key={idx} className="w-20 md:w-24 h-18 bg-zinc-100 dark:bg-zinc-900 overflow-hidden relative focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <button
+                  key={idx}
+                  onClick={() => setActiveImage(idx)}
+                  className={`w-20 md:w-full cursor-pointer aspect-[4/5] bg-zinc-100 dark:bg-zinc-900 overflow-hidden relative focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white rounded-lg border transition-all ${activeImage === idx
+                    ? "border-zinc-900 dark:border-white ring-1 ring-zinc-900 dark:ring-white"
+                    : "border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600"
+                    }`}
+                >
                   <Image src={img} alt={`${product.name} ${idx + 1}`} fill className="object-cover" />
                 </button>
               ))
@@ -76,9 +93,28 @@ export default function ProductDetailsClient({ product }) {
           </div>
 
           {/* Main Image */}
-          <div className="w-full aspect-[4/5] bg-zinc-100 dark:bg-zinc-900 relative rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm">
+          <div
+            className="w-full max-w-[550px] mx-auto aspect-[4/5] bg-zinc-100 dark:bg-zinc-900 relative rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm cursor-zoom-in"
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsZoomed(true)}
+            onMouseLeave={() => setIsZoomed(false)}
+          >
             {product.images && product.images.length > 0 ? (
-              <Image src={product.images[0].replace('?w=300&dpr=1', '')} alt={product.name} fill className="object-cover" />
+              <div
+                className="w-full h-full transition-transform duration-300 ease-out"
+                style={{
+                  transform: isZoomed ? "scale(1.8)" : "scale(1)",
+                  transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`
+                }}
+              >
+                <Image
+                  src={product.images[activeImage].replace('?w=300&dpr=1', '')}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-zinc-300 dark:text-zinc-700 text-lg">
                 Main Image
@@ -93,7 +129,7 @@ export default function ProductDetailsClient({ product }) {
         </div>
 
         {/* Right: Product Details */}
-        <div className="flex-1 w-full max-w-lg">
+        <div className="lg:flex-[1.15] w-full max-w-lg">
           <p className="text-sm text-zinc-500 mb-2 font-medium">{product.category}</p>
           <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white mb-4 tracking-tight">
             {product.name.replace(/TSS|Souled/gi, "Wearo").trim()}
@@ -181,7 +217,7 @@ export default function ProductDetailsClient({ product }) {
             <div className="mb-10">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-white uppercase tracking-wider">Size</h3>
-                <button className="text-sm text-zinc-500 underline underline-offset-4 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                <button className="text-sm cursor-pointer text-zinc-500 underline underline-offset-4 hover:text-zinc-900 dark:hover:text-white transition-colors">
                   Size Guide
                 </button>
               </div>
@@ -191,7 +227,7 @@ export default function ProductDetailsClient({ product }) {
                     key={sizeObj.size}
                     onClick={() => setSelectedSize(sizeObj.size)}
                     disabled={sizeObj.stock === 0}
-                    className={`h-12 border rounded-md flex items-center justify-center font-medium transition-all ${selectedSize === sizeObj.size
+                    className={`h-12 cursor-pointer border rounded-md flex items-center justify-center font-medium transition-all ${selectedSize === sizeObj.size
                       ? "border-zinc-900 bg-zinc-900 text-white dark:bg-white dark:border-white dark:text-black"
                       : "border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-600"
                       } ${sizeObj.stock === 0 ? "opacity-30 cursor-not-allowed line-through" : ""}`}
@@ -207,7 +243,7 @@ export default function ProductDetailsClient({ product }) {
           <div className="flex flex-col sm:flex-row gap-4 mb-10">
             <Button
               size="lg"
-              className={`flex-1 h-14 text-base ${isAddedToCart ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+              className={`flex-1 h-14 cursor-pointer text-base ${isAddedToCart ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
               onClick={handleAddToCart}
             >
               <ShoppingCart className={`mr-2 h-5 w-5 ${isAddedToCart ? "animate-bounce" : ""}`} />
@@ -217,7 +253,7 @@ export default function ProductDetailsClient({ product }) {
             <Button
               size="lg"
               variant="outline"
-              className="h-14 px-6 shrink-0"
+              className="h-14 px-6 shrink-0 cursor-pointer"
               onClick={handleWishlist}
             >
               <Heart className={`mr-2 h-5 w-5 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />

@@ -18,6 +18,10 @@ export async function GET(request) {
             rating: searchParams.get("rating"),
             priceMin: searchParams.get("min"),
             priceMax: searchParams.get("max"),
+            fabric: searchParams.get("fabric"),
+            sleeve: searchParams.get("sleeve"),
+            neck: searchParams.get("neck"),
+            fitType: searchParams.get("fitType"),
             tags: searchParams.get("tags")?.split(","),
             sort: searchParams.get("sort"),
             page: searchParams.get("page"),
@@ -27,6 +31,7 @@ export async function GET(request) {
         const pipeline = buildProductPipeline(filters)
 
         const products = await Product.aggregate(pipeline);
+        console.log("Products: ", products)
 
         // Transform for frontend compatibility
         const transformedProducts = products?.[0]?.products?.map(p => {

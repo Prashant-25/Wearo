@@ -89,3 +89,23 @@ if (process.env.NODE_ENV === "development") {
 const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
 
 export default Product;
+
+
+// {
+//   "mappings": {
+//     "dynamic": false,
+//     "fields": {
+//       "category": [
+//         {
+//           "type": "string"
+//         },
+//         {
+//           "type": "token"
+//         }
+//       ],
+//       "gender_type": {
+//         "type": "number"
+//       }
+//     }
+//   }
+// }
