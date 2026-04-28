@@ -95,7 +95,7 @@ export default function Navbar() {
           {/* Center Nav Links — hidden on mobile */}
           <ul className="hidden xl:flex items-center gap-1 lg:gap-2">
             {navLinks.map((link) => {
-              const isActive = pathname === link.href;
+              const isActive = pathname.includes(link.href);
               return (
                 <li key={link.href}>
                   <Link
