@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
@@ -33,6 +33,21 @@ export default function Navbar() {
   const clearAddress = useAddressStore((state) => state.clearAddress);
   const clearOrders = useOrderStore((state) => state.clearOrders);
   const pathname = usePathname();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e) => {
+    if (e) e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
   const cartItemsCount = useCartStore((state) => state.cart.length);
   const wishlistItemsCount = useWishlistStore((state) => state.wishlist.length);
   const { data: session, status } = useSession();
@@ -122,12 +137,18 @@ export default function Navbar() {
             <div className="hidden xl:flex items-center">
               {/* Search */}
               <div className="group relative flex items-center">
-                <div className="absolute left-3 z-10 pointer-events-none">
+                <button
+                  onClick={handleSearch}
+                  className="absolute left-3 cursor-pointer z-10 hover:scale-110 transition-transform"
+                >
                   <Search className="h-5 w-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
-                </div>
+                </button>
                 <Input
                   type="search"
                   placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   className="
                   w-10 h-10 pl-10 pr-0 
                   cursor-pointer rounded-full border-none bg-transparent 
