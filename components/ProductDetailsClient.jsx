@@ -136,10 +136,10 @@ export default function ProductDetailsClient({ product }) {
           </h1>
 
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-2xl font-bold text-zinc-900 dark:text-white">${product.price}</span>
+            <span className="text-2xl font-bold text-zinc-900 dark:text-white">₹{product.price}</span>
             {product.originalPrice && product.originalPrice > product.price && (
               <>
-                <span className="text-lg text-zinc-400 line-through">${product.originalPrice}</span>
+                <span className="text-lg text-zinc-400 line-through">₹{product.originalPrice}</span>
                 <Badge className="bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400 border-none px-2 py-0.5">
                   {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
                 </Badge>
